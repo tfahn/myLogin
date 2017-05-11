@@ -1,16 +1,12 @@
 <?php
-session_start();
+include_once( 'login-inc.php' );
 
 function check_password( $user, $pw ) {
 	//TODO: Aus Datenbank & gehasht
 	return 'user' == $user && 'pw' == $pw;
 }
 
-function is_logged_in() {
-	return isset( $_SESSION['logged-in'] ) && $_SESSION['logged-in'] == 1;
-}
-
-// Zuerst prÃ¼fen, damit beim Logout gleich das Formular wieder angezeigt wird
+// Zuerst prüfen, damit beim Logout gleich das Formular wieder angezeigt wird
 if ( isset( $_GET['logout'] ) ) {
 	session_destroy();
 	unset ( $_SESSION['logged-in'] );
@@ -26,7 +22,7 @@ if ( ! is_logged_in() ) {
 			// Login erfolgreich
             $_SESSION['logged-in'] = 1;
 			$_SESSION['user'] = $username;
-			header('Location: login.php');
+			header('Location: secret.php');
         } else {
             echo("Falsche Zugangsdaten");
             echo("<br><a href='login.php'>Noch einmal versuchen</a> ");
@@ -42,9 +38,4 @@ if ( ! is_logged_in() ) {
 
         <?php
     }
-} else {
-?>
-	<p>Hallo <?php echo $_SESSION['user']; ?>, hier steht was geheimes</p>	
-	<a href="login.php?logout=1">Ausloggen</a>
-<?php
 }
