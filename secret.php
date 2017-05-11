@@ -7,5 +7,5 @@ if ( ! is_logged_in() ) {
 }
 
 ?>
-<p>Hallo <?php echo $_SESSION['user']; ?>, hier steht was geheimes</p>	
+<p>Hallo <?php echo $_SESSION['user']; ?>, hier steht was nur für <?php echo $_SESSION['level']; ?></p>	
 <a href="login.php?logout=1">Ausloggen</a>

@@ -5,7 +5,7 @@ include_once( 'login-inc.php' );
 function check_password( $user, $pw ) {
 	global $db_link;
 	
-	$res = runSQL( "SELECT pw_hash FROM users WHERE user=\"" . mysqli_real_escape_string( $db_link, $user ) . "\"" );
+	$res = runSQL( "SELECT pw_hash, level FROM users WHERE user=\"" . mysqli_real_escape_string( $db_link, $user ) . "\"" );
 	$count = $res->num_rows;
 	
 	if ( $count != 1 )
@@ -14,7 +14,15 @@ function check_password( $user, $pw ) {
 	$row = $res->fetch_row();
 	$pw_hash = $row[0];
 
-	return password_verify( $pw, $pw_hash );
+	$valid = password_verify( $pw, $pw_hash );
+	if ( ! $valid ) {
+		return false;
+	}
+	
+	$_SESSION['user'] = $user;
+	$_SESSION['level'] = $row[1];
+	
+	return $valid;
 }
 
 // Zuerst prüfen, damit beim Logout gleich das Formular wieder angezeigt wird
@@ -31,8 +39,7 @@ if ( ! is_logged_in() ) {
 		
         if ( check_password( $username, $password ) ) {
 			// Login erfolgreich
-            $_SESSION['logged-in'] = 1;
-			$_SESSION['user'] = $username;
+            $_SESSION['logged-in'] = 1;			
 			
 			header('Location: secret.php'); //TODO: URL anpassen
         } else {
