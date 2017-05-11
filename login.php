@@ -6,15 +6,21 @@ function check_password( $user, $pw ) {
 	return 'user' == $user && 'pw' == $pw;
 }
 
-if ( ! isset( $_SESSION['eingeloggt'] ) || $_SESSION['eingeloggt'] != 1 ) {
+if ( isset( $_GET['logout'] ) ) {
+	session_destroy();
+	unset ( $_SESSION['logged-in'] );
+}
+
+if ( ! isset( $_SESSION['logged-in'] ) || $_SESSION['logged-in'] != 1 ) {
     if ( isset( $_POST['login'] ) ) {
 		
 		$username = $_POST['username'];
 		$password = $_POST['pass'];
 		
         if ( check_password( $username, $password ) ) {
-			// Login erfolgreich
-            $_SESSION['eingeloggt'] = 1;
+	    // Login erfolgreich
+            $_SESSION['logged-in'] = 1;
+			header('Location: login.php');
         } else {
             echo("Falsche Zugangsdaten");
             echo("<br><a href='login.php'>Noch einmal versuchen</a> ");
@@ -23,21 +29,16 @@ if ( ! isset( $_SESSION['eingeloggt'] ) || $_SESSION['eingeloggt'] != 1 ) {
         ?>
 
         <form action="login.php" method="post">
-            Benutzername:<input type="text" name="username"><br>
-            Passwort:<input type="password" name="pass"><br>
+            Benutzername: <input type="text" name="username"><br>
+            Passwort: <input type="password" name="pass"><br>
             <input type="submit" name="login">
         </form>
 
         <?php
     }
 } else {
-    if( isset( $_POST['logout'] ) ) {
-        session_destroy();
-    } else {
-        ?>
-        <form action="login.php" method="post">
-            <input type="submit" name="logout">
-        </form>
+?>
+	<p>Hier steht was geheimes</p>	
+	<a href="login.php?logout=1">Ausloggen</a>
 <?php
-    }
 }
