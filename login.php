@@ -1,9 +1,11 @@
 <?php
 include_once( 'login-inc.php' );
 
-function check_password( $user, $pw ) {
-	//TODO: Aus Datenbank & gehasht
-	return 'user' == $user && 'pw' == $pw;
+function check_password( $user, $pw ) {	
+	//TODO: Aus Datenbank
+	
+	$hash = "$2y$10$4b.HEihcOIOkaWSrr8P/UeSQsKvBGDqHBiuIB7AezgbATVqkZ/HLC";
+	return 'user' == $user && password_verify( $pw, $hash );
 }
 
 // Zuerst prüfen, damit beim Logout gleich das Formular wieder angezeigt wird
@@ -22,20 +24,25 @@ if ( ! is_logged_in() ) {
 			// Login erfolgreich
             $_SESSION['logged-in'] = 1;
 			$_SESSION['user'] = $username;
-			header('Location: secret.php');
+			
+			header('Location: secret.php'); //TODO: URL anpassen
         } else {
             echo("Falsche Zugangsdaten");
-            echo("<br><a href='login.php'>Noch einmal versuchen</a> ");
+            login_form();
         }
     } else {
-        ?>
-
-        <form action="login.php" method="post">
-            Benutzername: <input type="text" name="username"><br>
-            Passwort: <input type="password" name="pass"><br>
-            <input type="submit" name="login" value="Anmelden">
-        </form>
-
-        <?php
+        login_form();
     }
+}
+
+function login_form() {
+?>
+
+	<form action="login.php" method="post">
+		Benutzername: <input type="text" name="username"><br>
+		Passwort: <input type="password" name="pass"><br>
+		<input type="submit" name="login" value="Anmelden">
+	</form>
+
+<?php
 }
