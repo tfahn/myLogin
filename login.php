@@ -1,17 +1,20 @@
 <?php
+include_once( 'connectDB.php' );
 include_once( 'login-inc.php' );
 
 function check_password( $user, $pw ) {
-	$users = array( 
-		'user' => '$2y$10$4b.HEihcOIOkaWSrr8P/UeSQsKvBGDqHBiuIB7AezgbATVqkZ/HLC', // PW: pw
-		'test' => '$2y$10$R26LvhVF4y68sak69p2qVeWjh1e.ybDV0WQ7HpgFhS8WhjfdeSzze', // PW: test
-	);
-	//TODO: Aus Datenbank
+	global $db_link;
 	
-	if ( !array_key_exists( $user, $users ) )
+	$res = runSQL( "SELECT pw_hash FROM users WHERE user=\"" . mysqli_real_escape_string( $db_link, $user ) . "\"" );
+	$count = $res->num_rows;
+	
+	if ( $count != 1 )
 		return false;
 	
-	return password_verify( $pw, $users[ $user ] );
+	$row = $res->fetch_row();
+	$pw_hash = $row[0];
+
+	return password_verify( $pw, $pw_hash );
 }
 
 // Zuerst prüfen, damit beim Logout gleich das Formular wieder angezeigt wird
